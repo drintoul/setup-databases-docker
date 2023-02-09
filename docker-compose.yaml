@@ -6,7 +6,7 @@ services:
 
       container_name: mysql
       restart: always
-      image: mysql:oracle
+      image: mysql:8.0.32
       command: --connect_timeout=600
       env_file:
          - .env # MYSQL_ROOT_PASSWORD stored in .env
@@ -18,7 +18,7 @@ services:
    adminer_service:
 
       container_name: adminer
-      image: adminer
+      image: adminer:4.8.1
       restart: always
       ports:
         - "8080:8080"
