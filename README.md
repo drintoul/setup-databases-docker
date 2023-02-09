@@ -1,4 +1,4 @@
-# mysql_docker
+# mysql-docker
 MySQL running in Docker Container
 
 Note that MYSQL_ROOT_PASSWORD resides in a .env file which is not part of this repository for security reasons
