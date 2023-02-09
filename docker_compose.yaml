@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+   mysql_service:
+
+      container_name: mysql
+      restart: always
+      image: mysql:oracle
+      command: --connect_timeout=600
+      env_file:
+         - .env # MYSQL_ROOT_PASSWORD stored in .env
+      ports:
+         - "3306:3306"
+#      volumes:
+#         - mysql:/var/lib/mysql
+
+   adminer_service:
+
+      container_name: adminer
+      image: adminer
+      restart: always
+      ports:
+        - "8080:8080"
+      depends_on:
+        - mysql_service
+
+#volumes:
+
+#   mysql:
+#      external: true
