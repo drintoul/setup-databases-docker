@@ -1,31 +1,67 @@
-version: '3'
+version: '3.3'
 
 services:
 
-   mysql_service:
+  mysql_server:
 
-      container_name: mysql
-      restart: always
-      image: mysql:8.0.32
-      command: --connect_timeout=600
-      env_file:
-         - .env # MYSQL_ROOT_PASSWORD stored in .env
-      ports:
-         - "3306:3306"
-#      volumes:
-#         - mysql:/var/lib/mysql
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - database
+    environment:
+      - MYSQL_ROOT_PASSWORD=<secret>
 
-   adminer_service:
+  adminer:
+  
+    image: adminer:4.8.1-standalone
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    networks:
+      - database
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql_server
 
-      container_name: adminer
-      image: adminer:4.8.1
-      restart: always
-      ports:
-        - "8080:8080"
-      depends_on:
-        - mysql_service
+  neo4j_server:
 
-#volumes:
+    image: neo4j:5.15.0-community
+    restart: unless-stopped
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - neo4j_data:/data/
+    networks:
+      - database
+    environment:
+      - NEO4J_AUTH=none
 
-#   mysql:
-#      external: true
+
+volumes:
+
+  mysql_data:
+
+    driver: local
+    driver_opts:
+      type: none
+      device: /media/dave/mysql
+      o: bind
+
+  neo4j_data:
+
+    driver: local
+    driver_opts:
+      type: none
+      device: /media/dave/neo4j
+      o: bind
+
+
+networks:
+
+  database:
+    external: True
