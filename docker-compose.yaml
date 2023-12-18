@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
 
-  mysql_server:
+  mysql-server:
 
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
@@ -10,14 +10,14 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     networks:
       - database
     environment:
-      - MYSQL_ROOT_PASSWORD=<secret>
+      - MYSQL_ROOT_PASSWORD=secret
 
   adminer:
-  
+
     image: adminer:4.8.1-standalone
     restart: unless-stopped
     ports:
@@ -25,7 +25,9 @@ services:
     networks:
       - database
     environment:
-      - ADMINER_DEFAULT_SERVER=mysql_server
+      - ADMINER_DEFAULT_SERVER=mysql-server
+    depends_on:
+      - mysql-server
 
   neo4j_server:
 
@@ -35,16 +37,41 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      - neo4j_data:/data/
+      - neo4j-data:/data/
     networks:
       - database
     environment:
       - NEO4J_AUTH=none
 
+#  mongodb_server:
+
+#    image: mongo:7.0.4
+#    restart: unless-stopped
+#    volumes:
+#      - mongodb-data:/data/db
+#    networks:
+#      - database
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=root
+#      - MONGO_INITDB_ROOT_PASSWORD=secret
+
+#  mongodb_express:
+
+#    image: mongo-express:1.0.0-18
+#    restart: unless-stopped
+#    ports:
+#      - 8081:8081
+#    networks:
+#      - database
+#    environment:
+#      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+#      - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
+#      - ME_CONFIG_MONGODB_URL=mongodb://root:secret:27017/
+
 
 volumes:
 
-  mysql_data:
+  mysql-data:
 
     driver: local
     driver_opts:
@@ -52,13 +79,21 @@ volumes:
       device: /media/dave/mysql
       o: bind
 
-  neo4j_data:
+  neo4j-data:
 
     driver: local
     driver_opts:
       type: none
       device: /media/dave/neo4j
       o: bind
+
+#  mongodb-data:
+
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: /media/dave/mongodb
+#      o: bind
 
 
 networks:
